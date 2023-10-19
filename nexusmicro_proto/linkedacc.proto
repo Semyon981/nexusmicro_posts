@@ -1,0 +1,116 @@
+syntax = "proto3";
+
+
+option go_package = "./pb";
+
+import "google/protobuf/timestamp.proto";
+
+import "google/api/annotations.proto";
+
+
+service Linkedacc {
+
+    rpc GetVkUrl (GetVkUrlRequest) returns (GetVkUrlResponse){
+        option (google.api.http) = {
+            get: "/Linkedacc/GetVkUrl"
+          };
+    }
+
+
+    rpc AddVk (AddVkRequest) returns (AddVkResponse){
+        option (google.api.http) = {
+            post: "/Linkedacc/AddVk"
+            body: "*"
+          };
+    }
+
+
+    rpc AddTg (AddTgRequest) returns (AddTgResponse){
+        option (google.api.http) = {
+            post: "/Linkedacc/AddTg"
+            body: "*"
+          };
+    }
+    
+    rpc GetLinkedAccounts (GetLinkedAccountsRequest) returns (GetLinkedAccountsResponse){
+        option (google.api.http) = {
+            get: "/Linkedacc/GetLinkedAccounts"
+          };
+    }
+
+
+    rpc NewExternalPost (NewExternalPostRequest) returns (NewExternalPostResponse){
+        option (google.api.http) = {
+            post: "/Linkedacc/NewExternalPost"
+            body: "*"
+          };
+    }
+}
+
+message NewExternalPostRequest{
+    // id поста
+    uint64 post_id = 1;
+    // список подключенных сервисов, в которые нужно написать пост
+    repeated LinkedAccountInp ids = 2;
+}
+
+message NewExternalPostResponse{
+
+}
+
+message GetVkUrlRequest{
+    string redirect_uri = 1;
+    string state = 2;
+}
+
+message GetVkUrlResponse{
+    string url = 1;
+}
+
+message AddVkRequest{
+    string redirect_uri = 1;
+    string code = 2;
+}
+
+message AddVkResponse{
+    LinkedAccount account = 1;
+}
+
+
+message AddTgRequest{
+    string botToken = 1;
+    string channelName = 2;
+}
+
+message AddTgResponse{
+    LinkedAccount account = 1;
+}
+
+enum ExternalService{
+    Vk = 0;
+    Tg = 1;
+}
+
+message LinkedAccount{
+    int64 id = 1;
+    int64 owner_id = 2;
+    google.protobuf.Timestamp created = 3;
+    string name = 4;
+    string screenName = 5;
+    ExternalService service = 6;
+    string photoUrl = 7;
+}
+
+message LinkedAccountInp{
+    int64 id = 1;
+    ExternalService service = 2;
+}
+
+
+message GetLinkedAccountsRequest{
+}
+
+message GetLinkedAccountsResponse{
+    repeated LinkedAccount accounts = 1;
+}
+

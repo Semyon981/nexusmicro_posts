@@ -1,0 +1,481 @@
+syntax = "proto3";
+
+
+option go_package = "./pb";
+
+import "storage.proto";
+import "google/api/annotations.proto";
+
+
+service Users{
+
+    // GetUsersByIds
+    //
+    // Возвращает список пользователей по иx id. Если ids не заданы, возвращает аутентифицированного пользователя.
+    rpc GetUsersByIds (GetUsersByIdsRequest) returns (GetUsersByIdsResponse){
+        option (google.api.http) = {
+            get: "/Users/GetUsersByIds"
+          };
+    }
+
+
+    // GetUserById
+    //
+    // Возвращает пользователя по его id. Если id не задан, возвращает аутентифицированного пользователя.
+    rpc GetUserById (GetUserByIdRequest) returns (GetUserByIdResponse){
+        option (google.api.http) = {
+            get: "/Users/GetUserById"
+          };
+    }
+
+
+    // GetAuthUser
+    //
+    // Возвращает аутентифицированного пользователя.
+    rpc GetAuthUser (GetAuthUserRequest) returns (GetAuthUserResponse){
+        option (google.api.http) = {
+            get: "/Users/GetAuthUser"
+          };
+    }
+
+
+    // GetUsersList
+    //
+    // Возвращает список всех пользователей. Отсортирован по дате регистрации. Сначала новые.
+    rpc GetUsersList (GetUsersListRequest) returns (GetUsersListResponse){
+        option (google.api.http) = {
+            get: "/Users/GetUsersList"
+          };
+    }
+
+    // UpdateInfo
+    //
+    // Изменяет основную информацию профиля.
+    rpc UpdateInfo (UpdateInfoRequest) returns (UpdateInfoResponse){
+        option (google.api.http) = {
+            post: "/Users/UpdateInfo"
+            body: "*"
+          };
+    }
+
+
+    // UpdatePhoto
+    //
+    // Изменяет фотографию профиля.
+    rpc UpdatePhoto (UpdatePhotoRequest) returns (UpdatePhotoResponse){
+        option (google.api.http) = {
+            post: "/Users/UpdatePhoto"
+            body: "*"
+          };
+    }
+
+    // UpdateTags
+    //
+    // Изменяет теги профиля.
+    rpc UpdateTags (UpdateTagsRequest) returns (UpdateTagsResponse){
+        option (google.api.http) = {
+            post: "/Users/UpdateTags"
+            body: "*"
+          };
+    }
+    
+
+    // GetTags
+    //
+    // Возвращает список всех тегов. Отсортирован по популярности. Сначала популярные.
+    rpc GetTags (GetTagsRequest) returns (GetTagsResponse){
+        option (google.api.http) = {
+            get: "/Users/GetTags"
+          };
+    }
+
+    // SignUp
+    //
+    // Регистрирует нового пользователя.
+    rpc SignUp (SignUpRequest) returns (SignUpResponse){
+        option (google.api.http) = {
+            post: "/Users/SignUp"
+            body: "*"
+          };
+    }
+
+    // SignIn
+    //
+    // Обменивает номер телефона и пароль на токен и рефреш токен.
+    rpc SignIn (SignInRequest) returns (SignInResponse){
+        option (google.api.http) = {
+            post: "/Users/SignIn"
+            body: "*"
+          };
+    }
+
+
+    // SignUpByPhone
+    //
+    // Регистрирует нового пользователя.
+    rpc SignUpByPhone (SignUpByPhoneRequest) returns (SignUpByPhoneResponse){
+        option (google.api.http) = {
+            post: "/Users/SignUpByPhone"
+            body: "*"
+          };
+    }
+
+    // SignUpByPhoneConfirm
+    //
+    // Регистрирует нового пользователя.
+    rpc SignUpByPhoneConfirm (SignUpByPhoneConfirmRequest) returns (SignUpByPhoneConfirmResponse){
+        option (google.api.http) = {
+            post: "/Users/SignUpByPhoneConfirm"
+            body: "*"
+          };
+    }
+
+
+    // RefreshToken
+    //
+    // Обновляет токен c помощью рефреш токена.
+    rpc RefreshToken (RefreshTokenRequest) returns (RefreshTokenResponse){
+        option (google.api.http) = {
+            post: "/Users/RefreshToken"
+            body: "*"
+          };
+    }
+
+    // ChangePassword
+    //
+    // Изменяет пароль пользователя.
+    rpc ChangePassword (ChangePasswordRequest) returns  (ChangePasswordResponse){
+        option (google.api.http) = {
+            post: "/Users/ChangePassword"
+            body: "*"
+          };
+    }
+
+    // VerifyPhone
+    //
+    // Отправляет код подтверждения на указанный телефон. Чтобы подтвердить номер, нужно сделать запрос на VerifyPhoneConfirm.
+    rpc VerifyPhone (VerifyPhoneRequest) returns  (VerifyPhoneResponse){
+        option (google.api.http) = {
+            post: "/Users/VerifyPhone"
+            body: "*"
+          };
+    }
+
+    // VerifyPhoneConfirm
+    //
+    // Подтверждает номер телефона. Возвращает verify_token.
+    rpc VerifyPhoneConfirm (VerifyPhoneConfirmRequest) returns  (VerifyPhoneConfirmResponse){
+        option (google.api.http) = {
+            post: "/Users/VerifyPhoneConfirm"
+            body: "*"
+          };
+    }
+
+    // SubscribeOnUser
+    //
+    // Подписаться на пользователя
+    rpc SubscribeOnUser (SubscribeOnUserRequest) returns (SubscribeOnUserResponse){
+        option (google.api.http) = {
+            post: "/Users/SubscribeOnUser"
+            body: "*"
+          };
+    }
+
+    // UnsubscribeOnUser
+    //
+    // Отписаться от пользователя
+    rpc UnsubscribeOnUser (UnsubscribeOnUserRequest) returns (UnsubscribeOnUserResponse){
+        option (google.api.http) = {
+            post: "/Users/UnsubscribeOnUser"
+            body: "*"
+          };
+    }
+
+    // GetSubscriptionsList
+    //
+    // Возвращает список пользователей на которых подписан текущий пользователь. (Не реализовано)
+    rpc GetSubscriptionsList (GetSubscriptionsListRequest) returns (GetSubscriptionsListResponse){
+        option (google.api.http) = {
+            get: "/Users/GetSubscriptionsList"
+          };
+    }
+
+    // GetSubscriptionsList
+    //
+    // Возвращает список подписчиков текущего пользователя. (Не реализовано)
+    rpc GetSubscribersList (GetSubscribersListRequest) returns (GetSubscribersListResponse){
+        option (google.api.http) = {
+            get: "/Users/GetSubscribersList"
+          };
+    }
+
+}
+
+message GetSubscriptionsListRequest{
+    int32 limit = 1;
+    int64 lastId = 2;
+    repeated UserFields fields = 3;
+}
+
+message GetSubscriptionsListResponse{
+    repeated User users = 1;
+}
+
+
+message GetSubscribersListRequest{
+    int32 limit = 1;
+    int64 lastId = 2;
+    repeated UserFields fields = 3;
+}
+
+message GetSubscribersListResponse{
+    repeated User users = 1;
+}
+
+
+
+message SubscribeOnUserRequest{
+    int64 UserId = 1;
+}
+
+message SubscribeOnUserResponse{
+
+}
+
+message UnsubscribeOnUserRequest{
+    int64 UserId = 1;
+}
+
+message UnsubscribeOnUserResponse{
+
+}
+
+message ChangePasswordRequest{
+
+    string verify_token = 1;
+    // Новый пароль.
+    string password = 2;
+}
+
+message ChangePasswordResponse{
+
+}
+
+
+
+message VerifyPhoneRequest{
+    // Номер телефона, который нужно верефицировать. Если не указан, использует номер телефона авторизированного пользователя. В этом случае должен быть указан хедер Authorization: Bearer <token>.
+    optional string phone = 1;
+}
+
+message VerifyPhoneResponse{
+    // Ключ. Используется в VerifyPhoneConfirm.
+    string verify_key = 1;
+}
+
+message VerifyPhoneConfirmRequest{
+    // Ключ, полученный в VerifyPhone.
+    string verify_key = 1;
+    // Код, который пришел на телефон пользователя.
+    string code = 2;
+}
+
+message VerifyPhoneConfirmResponse{
+    // Токен верификации. Можно воспринимать как подтвержденный номер телефона.
+    string verify_token = 1;
+}
+
+
+
+message RefreshTokenRequest{
+    string refresh = 1;
+}
+
+message RefreshTokenResponse {
+    string token = 1;
+    string refresh = 2;
+}
+
+message SignUpByPhoneRequest{
+    string phone = 1;
+    string password = 2;
+    string name = 3;
+    string lastname = 4;
+}
+
+message SignUpByPhoneResponse{
+    string signUpKey = 1;
+}
+
+message SignUpByPhoneConfirmRequest{
+    string signUpKey = 1;
+    string code = 2;
+}
+
+message SignUpByPhoneConfirmResponse{
+    string token = 1;
+    string refresh = 2;
+}
+
+message SignInRequest{
+    string phone = 1;
+    string password = 2;
+}
+
+message SignInResponse {
+    string token = 1;
+    string refresh = 2;
+}
+
+
+message SignUpRequest{
+    string verify_token = 1;
+    string password = 2;
+    string name = 3;
+    string lastname = 4;
+}
+
+message SignUpResponse {
+    int64 id = 1;
+}
+
+
+message GetTagsRequest{
+    int32 limit = 1;
+    // теги будут начинаться на то, что будет здесь.
+    string like = 2;
+}
+
+message GetTagsResponse{
+    repeated string tags = 1;
+}
+
+
+message Layout {
+    int32 x = 1;
+    int32 y = 2;
+    int32 size = 3;
+}
+
+message LayoutPhoto{
+    optional Layout layout = 1;
+    Attachment photo = 4;
+}
+
+message LayoutPhotoString{
+    optional Layout layout = 1;
+    
+    AttachmentId attachment_id = 2;
+}
+
+enum Gender{
+    undefined = 0;
+    male = 1;
+    female = 2;
+}
+
+
+message UpdateTagsRequest{
+    repeated string tags = 1; 
+}
+
+message UpdateTagsResponse{
+    
+}
+
+
+// Для удадения, value = null. name и lastname нельзя удалить
+message UpdateInfoRequest{
+
+
+    optional string name = 1;
+    optional string lastname = 2;
+
+    optional string city = 3;
+    optional string description = 4;
+    optional Gender gender = 5;
+}
+
+message UpdateInfoResponse{
+    
+}
+
+message UpdatePhotoRequest{
+    optional LayoutPhotoString profile_photo = 1;
+}
+
+message UpdatePhotoResponse{
+    
+}
+
+message GetAuthUserRequest{
+
+    // Список дополнительных полей, который необходимо вернуть. id, name и lastname возвращаются всегда.
+    repeated UserFields fields = 2;
+}
+
+message GetAuthUserResponse{
+    User user = 1;
+}
+
+
+message GetUserByIdRequest{
+
+    int64 id = 1;
+
+    // Список дополнительных полей, который необходимо вернуть. id, name и lastname возвращаются всегда.
+    repeated UserFields fields = 2;
+}  
+
+message GetUserByIdResponse {
+    User user = 1;
+}
+
+message GetUsersByIdsRequest{
+    repeated int64 ids = 1;
+
+    // Список дополнительных полей, который необходимо вернуть. id, name и lastname возвращаются всегда.
+    repeated UserFields fields = 2;
+}  
+
+message GetUsersByIdsResponse {
+    repeated User users = 1;
+}
+
+
+message GetUsersListRequest{
+    int32 limit = 1;
+    // id пользователя, полученного в предыдущей выборке.
+    int64 last_id = 2;
+    // Список дополнительных полей, который необходимо вернуть. id, name и lastname возвращаются всегда.
+    repeated UserFields fields = 3;
+}
+
+enum UserFields{
+    city = 0;
+    description = 1;
+    gender = 2;
+    tags = 3;
+    profile_photo = 4;
+    subscriptionsCount = 5;
+    subscribersCount = 6;
+    subscribed = 7;
+}
+
+message User {
+    int64 id = 1;
+    string name = 2;
+    string lastname = 3;
+    optional string city = 4;
+    optional string description = 5;
+    optional Gender gender = 6;
+    repeated string tags = 7;
+    optional LayoutPhoto profile_photo = 8;
+    optional int32 subscriptionsCount = 9;
+    optional int32 subscribersCount = 10;
+    optional bool subscribed = 11;
+}
+
+message GetUsersListResponse{
+    repeated User users = 1;
+}

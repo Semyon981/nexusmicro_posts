@@ -1,0 +1,150 @@
+syntax = "proto3";
+
+option go_package = "./pb";
+
+import "users.proto";
+import "storage.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+service ChatRpc {
+    // GetChats
+    // 
+    // Возвращает список чатов, которые есть у пользователя
+    rpc GetChats(GetChatsRequest) returns (GetChatsResponse);
+
+    // LoadChatByChatId
+    //
+    // Возвращает чат по id чата
+    rpc LoadChatByChatId(LoadChatByChatIdRequest) returns (LoadChatByChatIdResponse);
+
+    // LoadMoreChats
+    //
+    // Загружает больше чатов, если надо, может загружать как вверх так и вниз
+    rpc LoadMoreChats(LoadMoreChatsRequest) returns (LoadMoreChatsResponse);
+
+    // LoadMoreMessagesByChatId
+    // 
+    // Загружает больше сообщений если надо, может загружать сообщения вверх и вниз
+    rpc LoadMoreMessagesByChatId(LoadMoreMessagesByChatIdRequest) returns (LoadMoreMessagesByChatIdResponse);
+
+    // SubToMessages
+    //
+    // Подписывается на обновления сообщений, в ответе возвращаются значения значения сообщений которые
+    // новые и могут быть получены новым пользовтелем
+    rpc SubToMessagesByChatId(SubToMessagesByChatIdRequest) returns (stream SubToMessagesByChatIdResponse);
+
+    // SubToChats
+    //
+    // Подписывается на обновление чатов, в ответе возвращается статистика по чатам и последнее сообщение, которое надо
+    // отобразить, а также количество не прочитанных сообщений
+    rpc SubToChats(SubToChatsRequest) returns (stream SubToChatsResponse);
+
+    // WriteMessageByChatId
+    // 
+    // Написать сообщение
+    rpc WriteMessageByChatId(WriteMessageByChatIdRequest) returns (google.protobuf.Empty);
+
+    // DeleteMessageByChatId
+    //
+    // Удалить сообщение (удаляет сообщение у всех, восстановить нельзя)
+    rpc DeleteMessageByChatId(DeleteMessageByChatIdRequest) returns (google.protobuf.Empty);
+}
+
+
+message Message {
+    int32 messageId = 1;
+    string text = 2;
+    repeated Attachment content = 3;
+    repeated Attachment files = 4;
+    google.protobuf.Timestamp time = 5;
+    int32 userId = 6;
+}
+
+message ChatPreview {
+    string messagePreview  = 1;
+    int32 unreadCount  = 2;
+    User user = 3;
+}
+
+message Chat {
+    User oponent = 1;
+    repeated Message messages = 2;
+}
+
+
+enum LoadMoreType {
+    TOP = 0;
+    BOTTOM = 1;
+}
+
+
+message GetChatsRequest {
+    int32 maxCount = 1;
+}
+
+message GetChatsResponse {
+    repeated ChatPreview chatsPreview = 1;
+}
+
+message LoadMoreChatsRequest {
+    int32 maxCount = 2;
+    Chat chat = 3;
+    LoadMoreType type = 4;
+}
+
+message LoadMoreChatsResponse {
+    repeated ChatPreview chatsPreview = 1;
+}
+
+message LoadChatByChatIdRequest {
+    int32 chatId  = 1;
+}
+
+message LoadChatByChatIdResponse {
+    Chat chat = 1;
+}
+
+message SubToMessagesByChatIdRequest {
+    int32 chatId = 1;
+    repeated int32 lastMessagesIds = 2;
+    bytes lastMessagesHash = 3;
+    google.protobuf.Timestamp subTime = 4;
+}
+
+message SubToMessagesByChatIdResponse {
+    int32 newestMessageId = 1;
+    int32 oldestMsssageId = 2;
+    int32 newMessagesCount = 3;
+}
+
+message SubToChatsRequest {
+    int32 maxCount = 1;
+    google.protobuf.Timestamp subTime = 2;
+}
+
+message SubToChatsResponse {
+    repeated ChatPreview chats = 1;
+}
+
+
+message LoadMoreMessagesByChatIdRequest {
+    int32 chatId = 1;
+    int32 maxCount  = 2;
+    LoadMoreType type  = 3;
+    Message message = 4;
+}
+
+message LoadMoreMessagesByChatIdResponse {
+    repeated Message messages = 1;
+}
+
+message WriteMessageByChatIdRequest {
+    Message message = 1;
+    int32 chatId = 2;
+}
+
+message DeleteMessageByChatIdRequest {
+    int32 chatId = 1;
+    int32 messageId = 2;
+}

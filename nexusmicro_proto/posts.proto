@@ -1,0 +1,279 @@
+syntax = "proto3";
+
+
+option go_package = "./pb";
+
+import "storage.proto";
+import "users.proto";
+import "linkedacc.proto";
+import "google/protobuf/timestamp.proto";
+
+import "google/api/annotations.proto";
+
+
+service Posts{
+    // NewPost
+    //
+    // Создает новый пост.
+    rpc NewPost(NewPostRequest) returns (NewPostResponse){
+        option (google.api.http) = {
+            post: "/Posts/NewPost"
+            body: "*"
+          };
+    }
+
+    // GetPostsList
+    //
+    // Возвращает список всех постов. Отсортирован по дате. Сначала новые.
+    rpc GetPostsList (GetPostsListRequest) returns (GetPostsListResponse){
+        option (google.api.http) = {
+            get: "/Posts/GetPostsList"
+          };
+    }
+
+    // GetPostsUser
+    //
+    // Возвращает список постов пользователя. Отсортирован по дате. Сначала новые.
+    rpc GetPostsUser (GetPostsUserRequest) returns (GetPostsUserResponse){
+        option (google.api.http) = {
+            get: "/Posts/GetPostsUser"
+          };
+    }
+
+    // AddLike
+    //
+    // Ставит лайк на пост.
+    rpc AddLike (AddLikeRequest) returns (AddLikeResponse){
+        option (google.api.http) = {
+            post: "/Posts/AddLike"
+            body: "*"
+          };
+    }
+
+    // DeleteLike
+    //
+    // Удаляет лайк с поста.
+    rpc DeleteLike (DeleteLikeRequest) returns (DeleteLikeResponse){
+        option (google.api.http) = {
+            post: "/Posts/DeleteLike"
+            body: "*"
+          };
+    }
+
+    // WriteComment
+    //
+    // Позволяет написать комментарий к посту.
+    rpc WriteComment (WriteCommentRequest) returns (WriteCommentResponse){
+        option (google.api.http) = {
+            post: "/Posts/WriteComment"
+            body: "*"
+          };
+    }
+
+    // GetCommentsList
+    //
+    // Возвращает список комментариев под постом. Отсортирован по дате. Направление сортировки зависит от параметра sort_dir. false - сначала новые (по умолчанию), true - сначала старые.
+    rpc GetCommentsList (GetCommentsListRequest) returns (GetCommentsListResponse){
+        option (google.api.http) = {
+            get: "/Posts/GetCommentsList"
+          };
+    }
+
+    // UpdatePost
+    //
+    // Изменяет пост. (Не реализовано).
+    rpc UpdatePost (UpdatePostRequest) returns (UpdatePostResponse){
+        option (google.api.http) = {
+            post: "/Posts/UpdatePost"
+            body: "*"
+          };
+    }
+
+    // GetPostById
+    //
+    // Получить пост по id
+    rpc GetPostById(GetPostByIdRequest) returns(GetPostByIdResponse){
+        option (google.api.http) = {
+            get: "/Posts/GetPostById"
+          };
+    }
+}
+
+message GetPostByIdRequest{
+    uint64 id = 1;
+
+    bool extended = 3;
+
+    // если true, вернется информация о владельцах комментариев.
+    bool comments_extended = 4;
+    // количество комментариев, которые необходимо вернуть.
+    int64 comments_limit = 5;
+    // Список дополнительных полей владельцев комментариев, которые необходимо вернуть.
+    repeated UserFields comments_fields = 6;
+    // Направление сортировки комментариев. false - сначала новые, true - сначала старые.
+    bool comments_sort_dir = 7;
+
+    // Список дополнительных полей владельцев постов, которые необходимо вернуть.
+    repeated UserFields fields = 8;
+}
+
+message GetPostByIdResponse{
+    Post post = 1;
+}
+
+
+message UpdatePostRequest{
+
+    uint64 post_id = 1;
+}
+
+message UpdatePostResponse{
+    Post post = 1;
+}
+
+
+message GetCommentsListRequest{
+    uint64 post_id = 1;
+    int64 limit = 2;
+    uint64 last_id = 3;
+    // Если true, вернет информацию о вледельцах (пользователях).
+    bool extended = 4;
+    // Направление сортировки. false - сначала новые. true - сначала старые.
+    bool sort_dir = 5;
+    // Список полей владельцев (пользователей), которые нужно вернуть.
+    repeated UserFields fields = 6;
+}
+
+message GetCommentsListResponse{
+    repeated Comment comments = 1;
+}
+
+
+message Comment {
+    uint64 id = 1;
+    uint64 post_id = 2;
+    int64 owner_id = 3;
+    string message = 4;
+    repeated Attachment attachments = 5;
+    google.protobuf.Timestamp time = 6;
+    // Тот, кто оставил комментарий. Возвращается, если extended = true.
+    User owner = 7;
+}
+
+
+message WriteCommentRequest{
+    uint64 post_id = 1;
+    // Сообщение. Обязательно, если не задан attachments.
+    string messaage = 2;
+    // Вложения. Обязательно, если не задан messaage.
+    repeated AttachmentId attachmentsIds = 3;
+}
+
+message WriteCommentResponse{
+    Comment comment = 1;
+}
+
+
+message LikesInfo{
+    // Лайкнут ли комментарий текущим пользователем.
+    optional bool liked = 1;
+    optional int64 count = 2;
+}
+
+message CommentsInfo{
+    optional int64 count = 1;
+    // список комментариев.
+    repeated Comment items = 2;
+}
+
+message Post{
+    uint64 id = 1;
+    google.protobuf.Timestamp time = 2;
+    int64 owner_id = 3;
+    string message = 4;
+    repeated Attachment attachments = 5;
+    LikesInfo likes = 6;
+    CommentsInfo comments = 7;
+    User owner = 8;
+}
+
+message NewPostRequest{
+    repeated AttachmentId attachmentsIds = 1;
+    string message = 2;
+    //Список подключенных аккаунтов в которые нужно написать пост
+    repeated LinkedAccountInp linkedacc_ids = 3;
+}
+
+message NewPostResponse{
+    Post Post = 1;
+}
+
+
+
+message GetPostsListRequest{
+    int64 limit = 1;
+    uint64 last_id = 2;
+
+    // если true, вернется информация о пользователях и комментариях.
+    bool extended = 3;
+
+    // если true, вернется информация о владельцах комментариев.
+    bool comments_extended = 4;
+    // количество комментариев, которые необходимо вернуть.
+    int64 comments_limit = 5;
+    // Список дополнительных полей владельцев комментариев, которые необходимо вернуть.
+    repeated UserFields comments_fields = 6;
+    // Направление сортировки комментариев. false - сначала новые, true - сначала старые.
+    bool comments_sort_dir = 7;
+
+    // Список дополнительных полей владельцев постов, которые необходимо вернуть.
+    repeated UserFields fields = 8;
+}
+
+
+message GetPostsListResponse{
+    repeated Post posts = 1;
+}
+
+
+message GetPostsUserRequest{
+    int64 limit = 1;
+    int64 user_id = 2;
+    uint64 last_id = 3;
+
+    // если true, вернется информация о пользователях и комментариях.
+    bool extended = 4;
+
+    // если true, вернется информация о владельцах комментариев.
+    bool comments_extended = 5;
+    // количество комментариев, которые необходимо вернуть.
+    int64 comments_limit = 6;
+    // Список дополнительных полей владельцев комментариев, которые необходимо вернуть.
+    repeated UserFields comments_fields = 7;
+    // Направление сортировки комментариев. false - сначала новые, true - сначала старые.
+    bool comments_sort_dir = 8;
+
+    // Список дополнительных полей владельцев постов, которые необходимо вернуть.
+    repeated UserFields fields = 9;
+}
+
+
+message GetPostsUserResponse{
+    repeated Post posts = 1;
+}
+
+message AddLikeRequest{
+    uint64 post_id = 1;
+}
+
+message AddLikeResponse{
+
+}
+
+message DeleteLikeRequest{
+    uint64 post_id = 1;
+}
+
+message DeleteLikeResponse{
+
+}

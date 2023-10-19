@@ -1,0 +1,143 @@
+syntax = "proto3";
+
+
+option go_package = "./pb";
+import "google/api/annotations.proto";
+
+service Storage{
+
+    rpc MultipartUploadVideo (stream MultipartUploadAnyRequest) returns (stream MultipartUploadAnyResponse);
+
+    rpc MultipartUploadPhoto (stream MultipartUploadAnyRequest) returns (stream MultipartUploadAnyResponse);
+
+    rpc MultipartUploadFile (stream MultipartUploadAnyRequest) returns (stream MultipartUploadAnyResponse);
+
+    rpc Upload (UploadRequest) returns (UploadResponse);
+
+
+    //rpc MultipartUpload (stream MultipartUploadRequest) returns (MultipartUploadResponse);
+
+
+    // GetAttachments
+    //
+    // Возвращает список вложений по иx id.
+    rpc GetAttachments (GetAttachmentsRequest) returns (GetAttachmentsResponse){
+        option (google.api.http) = {
+            get: "/Storage/GetAttachments"
+          };
+    }
+}
+
+
+message UploadRequest{
+    string FileName = 1;
+    AttachmentType type = 2;
+    bytes data = 3;
+}
+
+message UploadResponse{
+    Attachment attachment = 1;
+}
+
+
+message FileInfo{
+    int64 FileSize = 1;
+    string FileName = 2;
+}
+
+
+message UploadedPartMessage {
+    int64 TotalNumberOfBytesUploaded = 1;
+    int64 NumberOfBytesUploaded = 2;
+}
+
+message MultipartUploadAnyRequest{
+    oneof UploadReqOneof {
+        FileInfo info = 1;
+        bytes data = 2;
+    }
+}
+
+message MultipartUploadAnyResponse{
+    oneof UploadRespOneof {
+        Attachment attachment = 2;
+        UploadedPartMessage UploadedPart= 3;
+    }
+}
+
+
+
+
+message MultipartUploadVideoRequest{
+    oneof UploadReqOneof {
+        int64 FileSize = 1;
+        bytes data = 2;
+    }
+}
+
+message MultipartUploadVideoResponse{
+    oneof UploadRespOneof {
+        Attachment attachment = 2;
+        UploadedPartMessage UploadedPart= 3;
+    }
+}
+
+message MultipartUploadPhotoRequest{
+    oneof UploadReqOneof {
+        int64 FileSize = 1;
+        bytes data = 2;
+    }
+}
+
+message MultipartUploadPhotoResponse{
+    oneof UploadRespOneof {
+        int64 FileSize = 1;
+        Attachment attachment = 2;
+        UploadedPartMessage UploadedPart= 3;
+    }
+}
+
+message MultipartUploadFileRequest{
+    oneof UploadReqOneof {
+        int64 FileSize = 1;
+        bytes data = 2;
+    }
+}
+
+message MultipartUploadFileResponse{
+    oneof UploadRespOneof {
+        int64 FileSize = 1;
+        Attachment attachment = 2;
+        UploadedPartMessage UploadedPart= 3;
+    }
+}
+
+enum AttachmentType {
+    photo = 0;
+    video = 1;
+    file = 2;
+}
+
+message Attachment{
+    int64 id = 1;
+    int64 owner_id = 2;
+    string url = 3;
+    FileInfo info = 4;
+    AttachmentType type = 5;
+}
+
+message AttachmentId{
+    int64 id = 1; // @inject_tag: cql:"id"
+    int64 owner_id = 2; // @inject_tag: cql:"owner_id"
+    AttachmentType type = 3; // @inject_tag: cql:"type"
+}
+
+
+message GetAttachmentsRequest{
+    // Список id вложений
+    repeated AttachmentId ids = 1;
+}
+
+message GetAttachmentsResponse{
+    repeated Attachment attachments = 1;
+}

@@ -1,0 +1,21 @@
+version: "3.9"
+services:
+
+  nexusposts:
+    container_name: nexusposts
+    build: ./
+    environment:
+      - METRICS_PORT=8080
+      - GRPC_PORT=50051
+      - SIGNONG_KEY=signing_key
+      - STORAGE_URL=localhost:50051
+      - TZ=RU
+    networks:
+      - net
+    ports:
+    - "50051:50051"
+    - "8080:8080"
+
+networks:
+  net:
+    driver: bridge
